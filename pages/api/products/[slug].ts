@@ -5,7 +5,7 @@ import { Product } from '../../../models';
 
 type Data = 
 | { ok: boolean, message: string }
-| { ok: boolean, message: string, product: IProduct }
+| { product: IProduct }
 
 export default function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
 
@@ -40,8 +40,6 @@ const getProductBySlug =  async(req: NextApiRequest, res: NextApiResponse<Data>)
     }
 
     return res.status(200).json({
-        ok: true,
-        message: 'Product retrieved successfully',
         product
     })
 

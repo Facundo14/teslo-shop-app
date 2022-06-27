@@ -1,10 +1,10 @@
 import { Box, Button } from "@mui/material";
 import { FC } from "react";
-import { ISize } from "../../interfaces";
+import { ISizes } from "../../interfaces";
 
 interface Props {
-    selectedSize: ISize;
-    sizes: ISize[];
+    selectedSize: ISizes;
+    sizes: ISizes[];
 }
 
 export const SizeSelector:FC<Props> = ({ selectedSize, sizes }) => {
