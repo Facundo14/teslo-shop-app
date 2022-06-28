@@ -3,11 +3,14 @@ import { AccountCircleOutlined, AdminPanelSettings, CategoryOutlined, Confirmati
 import { useContext, useState } from 'react';
 import { UiContext } from '../../context/ui/UiContext';
 import { useRouter } from "next/router";
+import { AuthContext } from "../../context";
 
 
 export const SideMenu = () => {
 
     const router = useRouter();
+
+    const { logoutUser } = useContext(AuthContext);
     const { isMenuOpen, toggleSideMenu } = useContext(UiContext);
 
     const [searchTerm, setSearchTerm] = useState('');
@@ -22,6 +25,11 @@ export const SideMenu = () => {
     const navigateTo = (url: string) => {
         toggleSideMenu();
         router.push(url);
+    }
+
+    const onLogOut = () => {
+        logoutUser();
+        router.replace('/auth/login');
     }
 
     return (
@@ -115,7 +123,10 @@ export const SideMenu = () => {
                         <ListItemIcon>
                             <LoginOutlined/>
                         </ListItemIcon>
-                        <ListItemText primary={'Salir'} />
+                        <ListItemText 
+                            onClick={ onLogOut }
+                            primary={'Salir'} 
+                        />
                     </ListItem>
 
 
