@@ -5,7 +5,6 @@ import React from 'react'
 import { AuthLayout } from '../../components/layouts';
 import { useForm } from 'react-hook-form';
 import { validations } from '../../utils';
-import { tesloApi } from '../../api';
 import { ErrorOutline } from '@mui/icons-material';
 import { useState, useContext } from 'react';
 import { AuthContext } from '../../context';
@@ -17,8 +16,10 @@ type FormData = {
 }
 
 const LoginPage = () => {
+    
 
     const router = useRouter();
+    const destination = router.query.p?.toString() || '/';
 
     const { loginUser } = useContext(AuthContext);
 
@@ -41,7 +42,7 @@ const LoginPage = () => {
             return;
         }
 
-        router.replace('/');
+        router.replace(destination);
     }
 
     return (
@@ -105,7 +106,7 @@ const LoginPage = () => {
                         </Grid>
 
                         <Grid item xs={12} display='flex' justifyContent='end'>
-                            <NextLink href='/auth/register' passHref>
+                            <NextLink href={`/auth/register?p=${ destination }`}  passHref>
                                 <Link underline='always'>
                                     ¿No tienes una cuenta? Regístrate
                                 </Link>

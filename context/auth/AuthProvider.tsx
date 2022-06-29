@@ -1,5 +1,6 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import { useRouter } from 'next/router';
 import { FC, useEffect, useReducer } from 'react';
 import { tesloApi } from '../../api';
 import { IUser } from '../../interfaces';
@@ -22,42 +23,43 @@ const AUTH_INITIAL_STATE: AuthState = {
 export const AuthPovider:FC<Props> = ({ children }) => {
 
     const [state, dispatch] = useReducer(authReducer, AUTH_INITIAL_STATE)
+    const router = useRouter();
 
     useEffect(() => {
         checkToken();
     }, [])
     
     const checkToken = async () => {
-        const token = Cookies.get('token');
-        if(!token) {
+        if(!Cookies.get('token')) {
             return;
         }
         try {
-            const { data } = await tesloApi.get('/user/validate-token', {
-                headers: {
-                    Cookies: `token=${token}`
-                }
-            });
+
+            //En axios manda la cookie con el header
+            //Si es fetch no manda y hay que forzar
+            const { data } = await tesloApi.get('/user/validate-token');
+            const { token, user } = data;
             // console.log({data});
             
-            if(data.ok){
-                Cookies.set('token', token);
-                dispatch({
-                    type: '[AUTH] - Login',
-                    payload: data.user
-                })
-            }
+            Cookies.set('token', token);
+            dispatch({ type: '[AUTH] - Login', payload: user });
+
+            // if(data.ok){
+            //     Cookies.set('token', token);
+            //     dispatch({
+            //         type: '[AUTH] - Login',
+            //         payload: data.user
+            //     })
+            // }
     
-            if(!data.ok){
-                Cookies.remove('token');
-            }
+            // if(!data.ok){
+            //     Cookies.remove('token');
+            // }
             
         } catch (error) {
             console.log(error);
             Cookies.remove('token');
         }
-
-
         
     }
 
@@ -85,13 +87,14 @@ export const AuthPovider:FC<Props> = ({ children }) => {
 
     const logoutUser = () => {
         Cookies.remove('token');
-        dispatch({ type: '[AUTH] - Logout' });
+        Cookies.remove('cart');
+        router.reload();
     }
 
     const registerUser = async(name: string, email: string, password: string): Promise<{hasError: boolean; message?: string}> => {
         try {
 
-            const { data } = await tesloApi.post('/user/login', { name, email, password });
+            const { data } = await tesloApi.post('/user/register', { name, email, password });
             const { token, user } = data;
             
             Cookies.set('token', token);
