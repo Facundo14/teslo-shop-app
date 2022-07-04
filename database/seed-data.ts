@@ -14,10 +14,10 @@ interface SeedProduct {
 }
 
 interface SeedUser {
-    name: string,
-    email: string,
-    password: string,
-    role: 'admin'|'client'
+    name     : string;
+    email    : string;
+    password : string;
+    role     : 'admin'|'client'
 }
 
 type ValidSizes = 'XS'|'S'|'M'|'L'|'XL'|'XXL'|'XXXL';
@@ -26,32 +26,28 @@ type ValidTypes = 'shirts'|'pants'|'hoodies'|'hats';
 
 
 interface SeedData {
-    users: SeedUser[],
-    products: SeedProduct[],
+    users: SeedUser[];
+    products: SeedProduct[];
 }
+
+
+
 
 
 export const initialData: SeedData = {
     users: [
         {
-            name: 'Facundo Tanovich',
-            email: 'facundotanovich@gmail.com',
-            password:bcrypt.hashSync('123456'),
-            role:'admin'
+            name: 'Fernando Herrera',
+            email: 'fernando@google.com',
+            password: bcrypt.hashSync('123456'),
+            role: 'admin'
         },
         {
-            name: 'Ginna Comparin',
-            email: 'ginna@gmail.com',
-            password:bcrypt.hashSync('123456'),
-            role:'client'
+            name: 'Eduardo Rios',
+            email: 'eduardo@google.com',
+            password: bcrypt.hashSync('123456'),
+            role: 'client'
         },
-        {
-            name: 'Diamela Tanovich',
-            email: 'diamela@gmail.com',
-            password:bcrypt.hashSync('123456'),
-            role:'client'
-        },
-
     ],
     products: [
         {

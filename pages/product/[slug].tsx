@@ -1,31 +1,33 @@
-import { NextPage, GetServerSideProps, GetStaticPaths, GetStaticProps } from "next";
+import { useState, useContext } from 'react';
+import { NextPage, GetServerSideProps, GetStaticPaths, GetStaticProps } from 'next';
+import { useRouter } from 'next/router';
 
-import { Box, Button, Chip, Grid, Typography } from "@mui/material"
+import { Box, Button, Chip, Grid, Typography } from '@mui/material';
 
-import { getProductBySlug } from '../../database/dbProducts';
-import { ItemCounter } from "../../components/ui";
-import { ProductSlideshow } from '../../components/products/ProductSlideshow';
-import { ShopLayout } from "../../components/layouts"
-import { SizeSelector } from '../../components/products/SizeSelector';
-import { dbProducts } from "../../database";
-import { useContext, useState } from "react";
-import { IProduct, ICartProduct, ISizes } from "../../interfaces";
-import { useRouter } from "next/router";
-import { CartContext } from "../../context";
+import { CartContext } from '../../context/cart/CartContext';
+
+import { ShopLayout } from '../../components/layouts';
+import { ProductSlideshow, SizeSelector } from '../../components/products';
+import { ItemCounter } from '../../components/ui/ItemCounter';
+
+import { dbProducts } from '../../database';
+import { IProduct, ICartProduct, ISize } from '../../interfaces';
+
+
 
 interface Props {
   product: IProduct
 }
 
 
-const ProductPage:NextPage<Props> = ({product}) => {
+const ProductPage:NextPage<Props> = ({ product }) => {
 
   const router = useRouter();
-  const { addProductToCart } = useContext(CartContext);
+  const { addProductToCart } = useContext( CartContext )
 
   const [tempCartProduct, setTempCartProduct] = useState<ICartProduct>({
     _id: product._id,
-    images: product.images[0],
+    image: product.images[0],
     price: product.price,
     size: undefined,
     slug: product.slug,
@@ -34,109 +36,121 @@ const ProductPage:NextPage<Props> = ({product}) => {
     quantity: 1,
   })
 
-  const onSelectedSize = (size: ISizes) => {
-    setTempCartProduct(currentProduct => ({
+  const selectedSize = ( size: ISize ) => {
+    setTempCartProduct( currentProduct => ({
       ...currentProduct,
       size
-    }) );
+    }));
   }
 
-  const onUpdateQuantity = (quantity: number) => {
-    setTempCartProduct(currentProduct => ({
+  const onUpdateQuantity = ( quantity: number ) => {
+    setTempCartProduct( currentProduct => ({
       ...currentProduct,
       quantity
     }));
   }
 
+
   const onAddProduct = () => {
 
-    if(!tempCartProduct.size) return;
+    if ( !tempCartProduct.size ) { return; }
 
     addProductToCart(tempCartProduct);
-
     router.push('/cart');
   }
 
+
   return (
-    <ShopLayout title={product.title} pageDescription={product.description}>
+    <ShopLayout title={ product.title } pageDescription={ product.description }>
+    
       <Grid container spacing={3}>
-        <Grid item xs={12} sm={7}>
-          {/* Slideshow */}
-          <ProductSlideshow images={product.images} />
+
+        <Grid item xs={12} sm={ 7 }>
+          <ProductSlideshow 
+            images={ product.images }
+          />
         </Grid>
-        <Grid item xs={12} sm={5}>
+
+        <Grid item xs={ 12 } sm={ 5 }>
           <Box display='flex' flexDirection='column'>
-            {/* Titulos */}
+
+            {/* titulos */}
             <Typography variant='h1' component='h1'>{ product.title }</Typography>
             <Typography variant='subtitle1' component='h2'>{ `$${product.price}` }</Typography>
 
             {/* Cantidad */}
-            <Box sx={{my:2}}>
+            <Box sx={{ my: 2 }}>
               <Typography variant='subtitle2'>Cantidad</Typography>
-              <h1>{ product.inStock }</h1>
-
-              {/* ItemCounter */}
               <ItemCounter 
-                currentValue={tempCartProduct.quantity}
-                updateQuantity={onUpdateQuantity}
-                maxValue={product.inStock > 10 ? 10 : product.inStock}
+                currentValue={ tempCartProduct.quantity }
+                updatedQuantity={ onUpdateQuantity  }
+                maxValue={ product.inStock > 10 ? 10: product.inStock }
               />
               <SizeSelector 
-                // selectedSize={ product.sizes[0]} 
-                sizes={product.sizes} 
-                selectedSize={tempCartProduct.size}
-                onSelectedSize={ onSelectedSize }
+                // selectedSize={ product.sizes[2] } 
+                sizes={ product.sizes }
+                selectedSize={ tempCartProduct.size }
+                onSelectedSize={ selectedSize }
               />
             </Box>
+
+
             {/* Agregar al carrito */}
             {
               (product.inStock > 0)
-              ? (
-                <Button 
-                  color='secondary' 
-                  className='circular-btn'
-                  onClick={onAddProduct}  
-                >
-                  {
-                    tempCartProduct.size
-                    ? 'Agregar al carrito'
-                    : 'Seleccione una talla' 
-                  }
-                </Button>
-
-              )
-              : (
-                <Chip label='No hay disponible' color='error' variant='outlined' />
-              )
+               ? (
+                  <Button 
+                    color="secondary" 
+                    className='circular-btn'
+                    onClick={ onAddProduct }
+                  >
+                    {
+                      tempCartProduct.size
+                        ? 'Agregar al carrito'
+                        : 'Seleccione una talla'
+                    }
+                  </Button>
+               )
+               : (
+                 <Chip label="No hay disponibles" color="error" variant='outlined' />
+               )
             }
 
 
-            {/* Descripcion */}
+            {/* Descripción */}
             <Box sx={{ mt:3 }}>
               <Typography variant='subtitle2'>Descripción</Typography>
               <Typography variant='body2'>{ product.description }</Typography>
             </Box>
+
           </Box>
         </Grid>
+
+
       </Grid>
+
     </ShopLayout>
   )
 }
 
 
-// export const getServerSideProps: GetServerSideProps = async ({params}) => {
+// getServerSideProps 
+// You should use getServerSideProps when:
+// - Only if you need to pre-render a page whose data must be fetched at request time
+//* No usar esto.... SSR
+// export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   
 //   const { slug = '' } = params as { slug: string };
-//   const product = await getProductBySlug(slug);
+//   const product = await dbProducts.getProductBySlug( slug );
 
-//   if (!product) {
-//     return {
-//       redirect: {
-//         destination: '/',
-//         permanent: false
-//       }
-//     }
-//   }
+  // if ( !product ) {
+  //   return {
+  //     redirect: {
+  //       destination: '/',
+  //       permanent: false
+  //     }
+  //   }
+  // }
 
 //   return {
 //     props: {
@@ -144,6 +158,7 @@ const ProductPage:NextPage<Props> = ({product}) => {
 //     }
 //   }
 // }
+
 
 // getStaticPaths....
 // You should use getStaticPaths if you’re statically pre-rendering pages that use dynamic routes
@@ -188,5 +203,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     revalidate: 60 * 60 * 24
   }
 }
+
+
 
 export default ProductPage

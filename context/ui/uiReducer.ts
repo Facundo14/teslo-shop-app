@@ -2,19 +2,20 @@ import { UiState } from './';
 
 
 type UiActionType = 
-  | { type: '[UI] - TogglMenu'}
+   | { type: '[UI] - ToggleMenu' } 
 
-export const uiReducer = (state: UiState, action: UiActionType): UiState => {
+
+export const uiReducer = ( state: UiState, action: UiActionType ): UiState => {
+
    switch (action.type) {
-      case '[UI] - TogglMenu':
-          return {
+      case '[UI] - ToggleMenu':
+         return {
             ...state,
             isMenuOpen: !state.isMenuOpen
-          }
+        }
 
-      default:
-         return state;
-     }
-
+       default:
+          return state;
+   }
 
 }
