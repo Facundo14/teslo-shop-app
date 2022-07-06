@@ -21,12 +21,8 @@ const AUTH_INITIAL_STATE: AuthState = {
     user: undefined,
 }
 
-interface Props {
-    children?: React.ReactNode | undefined
-}
 
-
-export const AuthProvider:FC<Props> = ({ children }) => {
+export const AuthProvider:FC = ({ children }) => {
 
     const [state, dispatch] = useReducer( authReducer, AUTH_INITIAL_STATE );
     const { data, status } = useSession();
@@ -34,7 +30,6 @@ export const AuthProvider:FC<Props> = ({ children }) => {
 
     useEffect(() => {
       if ( status === 'authenticated' ) {
-        console.log({user: data?.user});
         dispatch({ type: '[Auth] - Login', payload: data?.user as IUser })
       }
     
@@ -90,11 +85,10 @@ export const AuthProvider:FC<Props> = ({ children }) => {
             }
 
         } catch (error) {
-            if(axios.isAxiosError(error)){
-                const { message } = error.response?.data as {message : string}
+            if ( axios.isAxiosError(error) ) {
                 return {
                     hasError: true,
-                    message
+                    message: error.response?.data.message
                 }
             }
 

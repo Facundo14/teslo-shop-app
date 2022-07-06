@@ -1,34 +1,30 @@
-# Nex.js Teslo Shop
-
-Para correr localmente, se necesita la base de datos
-
+# Next.js Telo Shop
+Para correr localmente, se necesita la base de datos.
 ```
 docker-compose up -d
 ```
 
-- El -d, significa **derached**
+* El -d, significa __detached__
 
-MongoDB URL Local:
 
+
+## Configurar las variables de entorno
+Renombrar el archivo __.env.template__ a __.env__
+* MongoDB URL Local:
 ```
-mongodb://localhost:27017
+MONGO_URL=mongodb://localhost:27017/teslodb
 ```
 
-- Recontruir los módulos de node e instalarlos
-
+* Reconstruir los módulos de node y levantar Next
 ```
 yarn install
 yarn dev
 ```
 
-## Configurar las variables de entorno
 
-Renombrar el archivo **.env.template** a **.env**
+## Llenar la base de datos con información de pruebas
 
-## LLenar la base de datos con informacion de purbeas
-
-Llamar a:
-
+Llamara:
 ```
 http://localhost:3000/api/seed
 ```
